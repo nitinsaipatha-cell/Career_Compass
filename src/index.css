@@ -1,32 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --bg-primary: #0f172a;
-  --bg-secondary: #020617;
-  --bg-card: rgba(30, 41, 59, 0.4);
-  --accent-primary: #8b5cf6;
-  --accent-secondary: #3b82f6;
-  --accent-glow: rgba(139, 92, 246, 0.15);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* Beige / Old Money Aesthetic */
+  --bg-primary: #fdfcf8;
+  --bg-secondary: #f4f1ea;
+  --bg-card: rgba(255, 255, 255, 0.6);
+
+  /* Earthy Accents */
+  --accent-primary: #bc9677;
+  /* Warm Latte */
+  --accent-secondary: #748c79;
+  /* Sage Green */
+  --accent-glow: rgba(188, 150, 119, 0.2);
+
+  /* Typography */
+  --text-primary: #3d342b;
+  /* Dark Espresso */
+  --text-secondary: #7d7369;
+  /* Muted Taupe */
+
+  --glass-border: rgba(61, 52, 43, 0.06);
+  --success: #6b8c63;
+  --warning: #d9a65d;
+  --danger: #cf6656;
 
   --font-main: 'Outfit', sans-serif;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 body {
   margin: 0;
   font-family: var(--font-main);
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  /* Warm Ambient Background */
   background-image:
-    radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+    radial-gradient(circle at 10% 20%, rgba(188, 150, 119, 0.05), transparent 30%),
+    radial-gradient(circle at 90% 60%, rgba(116, 140, 121, 0.06), transparent 30%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Living Background Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(200, 180, 160, 0.08), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(255, 240, 220, 0.5), transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(230, 210, 190, 0.1), transparent 50%);
+  filter: blur(60px);
+  animation: bg-pulse 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes bg-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
 }
 
 /* --- Layout Utilities (Mini-Framework) --- */
@@ -145,6 +192,10 @@ body {
   padding-bottom: 0.75rem;
 }
 
+.pb-8 {
+  padding-bottom: 2rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -165,8 +216,16 @@ body {
   margin-top: auto;
 }
 
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
 .space-y-4>*+* {
   margin-top: 1rem;
+}
+
+.space-y-6>*+* {
+  margin-top: 1.5rem;
 }
 
 .space-y-8>*+* {
@@ -216,57 +275,75 @@ body {
 
 /* Colors */
 .text-white {
-  color: white;
+  color: #3d342b;
 }
 
-.text-gray-400 {
-  color: var(--text-secondary);
+/* In light theme, white text often needs to be dark, creating context specific overrides */
+.text-real-white {
+  color: #ffffff;
 }
+
+/* For actual white text on dark buttons */
+.group:hover .text-white {
+  color: #3d342b;
+}
+
+/* Fix hover states */
+.btn-primary .text-white {
+  color: #ffffff;
+}
+
+/* Fix button text */
 
 /* Components */
 .glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(61, 52, 43, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(61, 52, 43, 0.08);
 }
 
 .heading-gradient {
-  background: linear-gradient(135deg, #ddd6fe, #ffffff, #beceff);
+  background: linear-gradient(135deg, #3d342b 0%, #bc9677 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, var(--accent-primary), #a68366);
   color: white;
+  /* Keep white for button text */
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   border: none;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(188, 150, 119, 0.3);
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(188, 150, 119, 0.4);
 }
 
 .input-field {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
   padding: 0.75rem 1rem;
@@ -274,11 +351,13 @@ body {
   width: 100%;
   outline: none;
   font-family: inherit;
+  transition: all 0.2s;
 }
 
 .input-field:focus {
+  background: rgba(255, 255, 255, 0.8);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px var(--accent-glow);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 /* Animations */
@@ -303,40 +382,101 @@ body {
   width: 6px;
 }
 
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(61, 52, 43, 0.1);
   border-radius: 3px;
 }
 
-/* Helpers for colors used in JS code */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(61, 52, 43, 0.2);
+}
+
+/* Tailwind-ish overrides for JS dynamic classes */
 .text-purple-400 {
-  color: #c084fc;
+  color: #9d7d9a;
 }
 
+/* Warm Lavender */
 .text-cyan-400 {
-  color: #22d3ee;
+  color: #6b8c87;
 }
 
+/* Sage */
 .text-green-400 {
-  color: #4ade80;
+  color: #6b8c63;
 }
 
+/* Moss */
 .text-yellow-400 {
-  color: #facc15;
+  color: #d9a65d;
 }
+
+/* Honey */
+.text-amber-400 {
+  color: #d9a65d;
+}
+
+/* Honey */
+.text-blue-400 {
+  color: #6b8c87;
+}
+
+/* Muted Blue/Sage */
+.text-emerald-400 {
+  color: #6b8c63;
+}
+
+/* Moss */
 
 .bg-purple-500\/10 {
-  background-color: rgba(168, 85, 247, 0.1);
+  background-color: rgba(157, 125, 154, 0.1);
 }
 
 .bg-cyan-500\/10 {
-  background-color: rgba(6, 182, 212, 0.1);
+  background-color: rgba(107, 140, 135, 0.12);
 }
 
 .bg-yellow-500\/10 {
-  background-color: rgba(234, 179, 8, 0.1);
+  background-color: rgba(217, 166, 93, 0.12);
 }
 
 .bg-green-500\/10 {
-  background-color: rgba(34, 197, 94, 0.1);
+  background-color: rgba(107, 140, 99, 0.12);
+}
+
+.bg-amber-500\/10 {
+  background-color: rgba(217, 166, 93, 0.15);
+}
+
+.bg-blue-500\/10 {
+  background-color: rgba(107, 140, 135, 0.12);
+}
+
+.bg-emerald-500\/10 {
+  background-color: rgba(107, 140, 99, 0.12);
+}
+
+.bg-purple-500\/5 {
+  background-color: rgba(157, 125, 154, 0.05);
+}
+
+.bg-blue-500\/5 {
+  background-color: rgba(107, 140, 135, 0.05);
+}
+
+.bg-emerald-500\/5 {
+  background-color: rgba(107, 140, 99, 0.05);
+}
+
+.bg-amber-500\/5 {
+  background-color: rgba(217, 166, 93, 0.05);
+}
+
+/* Custom fix for the sidebar active state text */
+.sidebar-active-text {
+  color: white !important;
 }

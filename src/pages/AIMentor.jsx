@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Bot, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AIMentor = () => {
@@ -80,11 +80,17 @@ const AIMentor = () => {
                         key={msg.id}
                         className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <div className={`max-w-[80%] rounded-2xl p-4 ${msg.sender === 'user'
-                                ? 'bg-[var(--accent-primary)] text-white rounded-tr-sm'
-                                : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-tl-sm border border-[var(--glass-border)]'
-                            }`}>
-                            <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
+                        <div className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${msg.sender === 'user' ? 'bg-[var(--accent-primary)]' : 'bg-[var(--bg-secondary)] border border-[var(--glass-border)]'
+                                }`}>
+                                {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
+                            </div>
+                            <div className={`rounded-2xl p-4 shadow-sm ${msg.sender === 'user'
+                                    ? 'bg-[var(--accent-primary)] text-white rounded-tr-sm'
+                                    : 'glass-panel border text-[var(--text-primary)] rounded-tl-sm'
+                                }`}>
+                                <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
+                            </div>
                         </div>
                     </motion.div>
                 ))}
