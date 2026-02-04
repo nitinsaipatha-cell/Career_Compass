@@ -133,7 +133,7 @@ const SkillMatching = () => {
             </div>
 
             <div className="glass-panel p-6">
-                <form onSubmit={addSkill} className="flex gap-4 mb-6">
+                <form onSubmit={addSkill} className="flex flex-col md:flex-row gap-4 mb-6">
                     <div className="relative flex-1">
                         <input
                             type="text"
@@ -143,19 +143,19 @@ const SkillMatching = () => {
                             className="input-field w-full"
                         />
                     </div>
-                    <button type="submit" className="btn-primary flex items-center gap-2 px-6">
+                    <button type="submit" className="btn-primary justify-center flex items-center gap-2 px-6">
                         <Plus size={20} /> Add
                     </button>
 
-                    <div className="relative">
+                    <div className="relative w-full md:w-auto">
                         <input
                             type="file"
                             accept=".pdf"
                             onChange={handleResumeUpload}
-                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                             disabled={isUploading}
                         />
-                        <button type="button" className={`h-full px-6 rounded-xl border border-[var(--glass-border)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white transition-all flex items-center gap-2 font-medium ${isUploading ? 'opacity-70 cursor-wait' : ''}`}>
+                        <button type="button" className={`w-full md:w-auto py-3 px-6 rounded-xl border border-[var(--glass-border)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white transition-all flex items-center justify-center gap-2 font-medium ${isUploading ? 'opacity-70 cursor-wait' : ''}`}>
                             {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
                             {isUploading ? 'Parsing...' : 'Upload Resume'}
                         </button>

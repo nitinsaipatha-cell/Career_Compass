@@ -18,13 +18,13 @@ const Courses = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
                     <h1 className="text-4xl font-bold heading-gradient mb-2">Learning Paths</h1>
                     <p className="text-[var(--text-secondary)]">Master in-demand skills with our curated curriculum.</p>
                 </div>
 
-                <div className="flex p-1 bg-[var(--bg-secondary)]/50 backdrop-blur-sm border border-[var(--glass-border)] rounded-xl relative">
+                <div className="flex p-1 bg-[var(--bg-secondary)]/50 backdrop-blur-sm border border-[var(--glass-border)] rounded-xl relative overflow-x-auto max-w-full">
                     {['All', 'Beginner', 'Intermediate', 'Advanced'].map(cat => (
                         <button
                             key={cat}

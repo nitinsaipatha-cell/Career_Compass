@@ -72,7 +72,7 @@ const Login = () => {
             </div>
 
             {/* Right Side - Form */}
-            <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-[var(--bg-primary)]">
+            <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 bg-[var(--bg-primary)]">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center md:text-left">
                         <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
