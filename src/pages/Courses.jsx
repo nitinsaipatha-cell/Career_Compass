@@ -3,12 +3,12 @@ import { BookOpen, Clock, Star, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const courses = [
-    { id: 1, title: 'Complete Web Dev Bootcamp', level: 'Beginner', duration: '40h', rating: 4.8, category: 'Web Dev' },
-    { id: 2, title: 'Python for Data Science', level: 'Beginner', duration: '25h', rating: 4.9, category: 'Data Science' },
-    { id: 3, title: 'Advanced React Patterns', level: 'Advanced', duration: '12h', rating: 4.7, category: 'Web Dev' },
-    { id: 4, title: 'Machine Learning A-Z', level: 'Intermediate', duration: '35h', rating: 4.6, category: 'AI' },
-    { id: 5, title: 'UI/UX Design Masterclass', level: 'Beginner', duration: '15h', rating: 4.8, category: 'Design' },
-    { id: 6, title: 'Cybersecurity Fundamentals', level: 'Intermediate', duration: '20h', rating: 4.5, category: 'Security' },
+    { id: 1, title: 'Meta Front-End Developer', level: 'Beginner', duration: '40h', rating: 4.8, category: 'Web Dev', link: 'https://www.coursera.org/professional-certificates/meta-front-end-developer' },
+    { id: 2, title: 'Python for Data Science & AI', level: 'Beginner', duration: '25h', rating: 4.9, category: 'Data Science', link: 'https://www.coursera.org/learn/python-for-applied-data-science-ai' },
+    { id: 3, title: 'Advanced React', level: 'Advanced', duration: '12h', rating: 4.7, category: 'Web Dev', link: 'https://www.coursera.org/learn/advanced-react' },
+    { id: 4, title: 'Machine Learning Specialization', level: 'Intermediate', duration: '35h', rating: 4.9, category: 'AI', link: 'https://www.coursera.org/specializations/machine-learning-introduction' },
+    { id: 5, title: 'Google UX Design Certificate', level: 'Beginner', duration: '15h', rating: 4.8, category: 'Design', link: 'https://www.coursera.org/professional-certificates/google-ux-design' },
+    { id: 6, title: 'Google Cybersecurity Certificate', level: 'Intermediate', duration: '20h', rating: 4.8, category: 'Security', link: 'https://www.coursera.org/professional-certificates/google-cybersecurity' },
 ];
 
 const Courses = () => {
@@ -84,8 +84,8 @@ const Courses = () => {
                             <div className="p-5">
                                 <div className="flex justify-between items-start mb-3">
                                     <span className={`text-xs px-2.5 py-1 rounded-md font-medium border ${course.level === 'Beginner' ? 'border-emerald-500/20 text-emerald-400 bg-emerald-500/10' :
-                                            course.level === 'Intermediate' ? 'border-amber-500/20 text-amber-400 bg-amber-500/10' :
-                                                'border-rose-500/20 text-rose-400 bg-rose-500/10'
+                                        course.level === 'Intermediate' ? 'border-amber-500/20 text-amber-400 bg-amber-500/10' :
+                                            'border-rose-500/20 text-rose-400 bg-rose-500/10'
                                         }`}>
                                         {course.level}
                                     </span>
@@ -104,9 +104,14 @@ const Courses = () => {
                                     <span className="flex items-center gap-1.5"><BookOpen size={14} /> 12 Modules</span>
                                 </div>
 
-                                <button className="w-full py-2.5 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-white border border-[var(--glass-border)] hover:border-[var(--accent-primary)] transition-all font-medium text-sm flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-purple-500/20">
+                                <a
+                                    href={course.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2.5 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] text-[var(--text-secondary)] hover:text-white border border-[var(--glass-border)] hover:border-[var(--accent-primary)] transition-all font-medium text-sm flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-purple-500/20"
+                                >
                                     Start Learning <PlayCircle size={16} />
-                                </button>
+                                </a>
                             </div>
                         </motion.div>
                     ))}

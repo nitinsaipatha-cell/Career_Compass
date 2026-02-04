@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import Groq from 'groq-sdk';
+
+
 const AIMentor = () => {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([
@@ -22,21 +25,30 @@ const AIMentor = () => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const generateResponse = (query) => {
-        const lowerQuery = query.toLowerCase();
-        if (lowerQuery.includes('roadmap') || lowerQuery.includes('path')) {
-            return "Here is a suggested roadmap for you: \n1. Master the Fundamentals (HTML/CSS/JS or Python)\n2. Learn a Framework (React, Django)\n3. Build 3 Key Projects\n4. Contribute to Open Source\n5. Apply for Internships.";
+    // Initialize Groq
+    const apiKey = import.meta.env.VITE_GROQ_API_KEY || "";
+    const groq = apiKey ? new Groq({ apiKey, dangerouslyAllowBrowser: true }) : null;
+
+    const generateAIResponse = async (query) => {
+        if (!groq) {
+            return "I'm currently in offline mode (API Key missing). Please check your configuration.";
         }
-        if (lowerQuery.includes('salary') || lowerQuery.includes('money')) {
-            return "Salaries vary by region, but currently:\n- Junior Dev: $60k - $90k\n- Mid-Level: $90k - $130k\n- Senior: $140k+\nSpecialized roles like AI Engineers can command even higher premiums.";
+        try {
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: "system", content: "You are a helpful and knowledgeable AI Career Mentor. Provide concise, encouraging, and actionable career advice, learning roadmaps, and industry insights. Keep responses under 150 words unless asked for a detailed guide." },
+                    { role: "user", content: query }
+                ],
+                model: "llama-3.3-70b-versatile",
+            });
+            return completion.choices[0]?.message?.content || "I couldn't generate a response.";
+        } catch (error) {
+            console.error("Groq API Error:", error);
+            return "Sorry, I encountered an error while connecting to the AI service.";
         }
-        if (lowerQuery.includes('python') || lowerQuery.includes('coding')) {
-            return "Python is an excellent choice! It's great for Data Science, AI, and Backend Web Development. I'd recommend starting with 'Automate the Boring Stuff with Python'.";
-        }
-        return "That's an interesting point. To give you the best advice, could you share more about your current skills or what subjects you enjoy the most?";
     };
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault();
         if (!input.trim()) return;
 
@@ -45,15 +57,19 @@ const AIMentor = () => {
         setInput('');
         setIsTyping(true);
 
-        setTimeout(() => {
+        try {
+            const responseText = await generateAIResponse(input);
             const botMsg = {
                 id: Date.now() + 1,
-                text: generateResponse(userMsg.text),
+                text: responseText,
                 sender: 'bot'
             };
             setMessages(prev => [...prev, botMsg]);
+        } catch (err) {
+            console.error(err);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
@@ -86,8 +102,8 @@ const AIMentor = () => {
                                 {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
                             </div>
                             <div className={`rounded-2xl p-4 shadow-sm ${msg.sender === 'user'
-                                    ? 'bg-[var(--accent-primary)] text-white rounded-tr-sm'
-                                    : 'glass-panel border text-[var(--text-primary)] rounded-tl-sm'
+                                ? 'bg-[var(--accent-primary)] text-white rounded-tr-sm'
+                                : 'glass-panel border text-[var(--text-primary)] rounded-tl-sm'
                                 }`}>
                                 <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
                             </div>

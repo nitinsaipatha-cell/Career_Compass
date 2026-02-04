@@ -8,16 +8,16 @@ import {
   LayoutDashboard,
   Menu,
   X,
-  ChevronRight // Added import
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 
 const Layout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth(); // Get user and signOut
+  const { user, signOut } = useAuth();
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
             <TrendingUp size={24} color="white" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">CareerPath</h1>
+            <h1 className="text-xl font-bold tracking-tight text-white">Career Compass</h1>
             <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] font-semibold">Compass</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ const Layout = ({ children }) => {
         </div>
 
         {/* Bottom Actions */}
-        < div className="p-4 mt-auto space-y-4" >
+        <div className="p-4 mt-auto space-y-4">
           <div className="glass-panel p-5 rounded-2xl bg-gradient-to-br from-[#1e1b4b] to-[var(--bg-secondary)] border border-indigo-500/20 relative overflow-hidden group">
             <div className="absolute -right-4 -top-4 w-20 h-20 bg-[var(--accent-primary)]/20 rounded-full blur-xl group-hover:bg-[var(--accent-primary)]/30 transition-colors"></div>
             <div className="relative z-10">
@@ -132,11 +132,11 @@ const Layout = ({ children }) => {
             </div>
             Sign Out
           </button>
-        </div >
-      </aside >
+        </div>
+      </aside>
 
       {/* Mobile Header */}
-      < div className="md:hidden fixed top-0 w-full z-50 glass-panel border-x-0 border-t-0 rounded-none px-4 py-3 flex justify-between items-center bg-[var(--bg-primary)]/80" >
+      <div className="md:hidden fixed top-0 w-full z-50 glass-panel border-x-0 border-t-0 rounded-none px-4 py-3 flex justify-between items-center bg-[var(--bg-primary)]/80">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] flex items-center justify-center">
             <TrendingUp size={20} color="white" />
@@ -146,10 +146,10 @@ const Layout = ({ children }) => {
         <button onClick={toggleMobileMenu} className="p-2 text-[var(--text-primary)]">
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-      </div >
+      </div>
 
       {/* Mobile Menu Overlay */}
-      < AnimatePresence >
+      <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -177,10 +177,10 @@ const Layout = ({ children }) => {
             </nav>
           </motion.div>
         )}
-      </AnimatePresence >
+      </AnimatePresence>
 
       {/* Main Content */}
-      < main className="flex-1 p-4 md:p-8 pt-20 md:pt-8 w-full max-w-7xl mx-auto overflow-x-hidden" >
+      <main className="flex-1 p-4 md:p-8 pt-20 md:pt-8 w-full max-w-7xl mx-auto overflow-x-hidden">
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 20 }}
@@ -189,8 +189,8 @@ const Layout = ({ children }) => {
         >
           {children}
         </motion.div>
-      </main >
-    </div >
+      </main>
+    </div>
   );
 };
 

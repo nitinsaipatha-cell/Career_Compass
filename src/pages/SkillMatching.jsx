@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, X, CheckCircle, AlertCircle, Briefcase } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle, Briefcase, Upload, Loader2, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Groq from 'groq-sdk';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Initialize PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 const jobRoles = [
     {
@@ -33,6 +38,61 @@ const SkillMatching = () => {
     const [skills, setSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
     const [showResults, setShowResults] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+
+    // Initialize Groq
+    const apiKey = import.meta.env.VITE_GROQ_API_KEY || "";
+    const groq = apiKey ? new Groq({ apiKey, dangerouslyAllowBrowser: true }) : null;
+
+    const handleResumeUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            // 1. Extract Text from PDF
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = '';
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += pageText + ' ';
+            }
+
+            // 2. Extract Skills using Groq
+            if (!groq) throw new Error("Groq API Key missing");
+
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an expert resume parser. Extract a list of technical skills from the provided resume text. Return ONLY a comma-separated list of skills (e.g., 'React, Python, SQL'). Do not include any introductory text or labels."
+                    },
+                    { role: "user", content: fullText }
+                ],
+                model: "llama-3.3-70b-versatile",
+            });
+
+            const extractedSkillsString = completion.choices[0]?.message?.content || "";
+            const newSkills = extractedSkillsString.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+            // 3. Update State
+            // Filter duplicates
+            const uniqueNewSkills = newSkills.filter(s => !skills.includes(s));
+            setSkills(prev => [...prev, ...uniqueNewSkills]);
+            setShowResults(true);
+
+        } catch (error) {
+            console.error("Resume parsing error:", error);
+            alert("Failed to extract skills from resume. Please try again or enter manually.");
+        } finally {
+            setIsUploading(false);
+            e.target.value = null; // Reset input
+        }
+    };
 
     const addSkill = (e) => {
         e.preventDefault();
@@ -74,16 +134,32 @@ const SkillMatching = () => {
 
             <div className="glass-panel p-6">
                 <form onSubmit={addSkill} className="flex gap-4 mb-6">
-                    <input
-                        type="text"
-                        value={currentSkill}
-                        onChange={(e) => setCurrentSkill(e.target.value)}
-                        placeholder="e.g. React, Python, Figma"
-                        className="input-field flex-1"
-                    />
-                    <button type="submit" className="btn-primary flex items-center gap-2">
-                        <Plus size={20} /> Add Skill
+                    <div className="relative flex-1">
+                        <input
+                            type="text"
+                            value={currentSkill}
+                            onChange={(e) => setCurrentSkill(e.target.value)}
+                            placeholder="e.g. React, Python, Figma"
+                            className="input-field w-full"
+                        />
+                    </div>
+                    <button type="submit" className="btn-primary flex items-center gap-2 px-6">
+                        <Plus size={20} /> Add
                     </button>
+
+                    <div className="relative">
+                        <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleResumeUpload}
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            disabled={isUploading}
+                        />
+                        <button type="button" className={`h-full px-6 rounded-xl border border-[var(--glass-border)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white transition-all flex items-center gap-2 font-medium ${isUploading ? 'opacity-70 cursor-wait' : ''}`}>
+                            {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+                            {isUploading ? 'Parsing...' : 'Upload Resume'}
+                        </button>
+                    </div>
                 </form>
 
                 <div className="flexflex-wrap gap-2 min-h-[50px]">

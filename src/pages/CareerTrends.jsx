@@ -4,33 +4,7 @@ import { TrendingUp, ArrowUpRight, ChevronDown, Loader2, Sparkles } from 'lucide
 import { motion, AnimatePresence } from 'framer-motion';
 import Groq from 'groq-sdk';
 
-// Fallback Data
-const staticSectorData = {
-    'Computer Science': [
-        { role: 'AI Engineering', salary: '₹20-45 LPA', demand: 'Very High', growth: '+45%', desc: 'Designing and deploying intelligent systems.' },
-        { role: 'Full Stack Dev', salary: '₹10-25 LPA', demand: 'High', growth: '+22%', desc: 'Building comprehensive web solutions.' },
-        { role: 'Cybersecurity', salary: '₹15-30 LPA', demand: 'Critical', growth: '+35%', desc: 'Protecting enterprise digital assets.' },
-        { role: 'Cloud Architect', salary: '₹25-40 LPA', demand: 'Very High', growth: '+28%', desc: 'Designing scalable cloud infrastructure.' }
-    ],
-    'Business': [
-        { role: 'Product Manager', salary: '₹18-35 LPA', demand: 'High', growth: '+18%', desc: 'Leading product strategy and development.' },
-        { role: 'Data Analyst', salary: '₹8-18 LPA', demand: 'Very High', growth: '+25%', desc: 'Interpreting complex data for business insights.' },
-        { role: 'Digital Marketer', salary: '₹6-15 LPA', demand: 'Steady', growth: '+12%', desc: 'Driving growth through digital channels.' },
-        { role: 'FinTech Analyst', salary: '₹12-28 LPA', demand: 'High', growth: '+30%', desc: 'Analyzing financial technology trends.' }
-    ],
-    'Design': [
-        { role: 'UX Researcher', salary: '₹10-22 LPA', demand: 'High', growth: '+20%', desc: 'Understanding user behaviors and needs.' },
-        { role: 'UI Designer', salary: '₹8-20 LPA', demand: 'High', growth: '+15%', desc: 'Creating intuitive and visual interfaces.' },
-        { role: '3D Artist', salary: '₹6-18 LPA', demand: 'Niche', growth: '+25%', desc: 'Creating 3D models for games and VR.' },
-        { role: 'Brand Identity', salary: '₹8-16 LPA', demand: 'Steady', growth: '+10%', desc: 'Shaping visual brand strategies.' }
-    ],
-    'Architecture': [
-        { role: 'Sustainable Architect', salary: '₹12-25 LPA', demand: 'Very High', growth: '+40%', desc: 'Designing eco-friendly buildings.' },
-        { role: 'Urban Planner', salary: '₹10-20 LPA', demand: 'Steady', growth: '+12%', desc: 'Designing functional city layouts.' },
-        { role: 'BIM Specialist', salary: '₹8-18 LPA', demand: 'High', growth: '+35%', desc: 'Managing digital building information models.' },
-        { role: 'Landscape Architect', salary: '₹6-14 LPA', demand: 'Moderate', growth: '+8%', desc: 'Designing outdoor public spaces.' }
-    ]
-};
+const SECTORS = ['Computer Science', 'Business', 'Design', 'Architecture'];
 
 const chartData = [
     { name: 'AI/ML', growth: 95, color: '#8b5cf6' },
@@ -44,7 +18,7 @@ const chartData = [
 const CareerTrends = () => {
     const [selectedSector, setSelectedSector] = useState('Computer Science');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [insights, setInsights] = useState(staticSectorData['Computer Science']);
+    const [insights, setInsights] = useState([]);
     const [loading, setLoading] = useState(false);
     const [aiPowered, setAiPowered] = useState(false);
     const [debugError, setDebugError] = useState(null);
@@ -59,9 +33,9 @@ const CareerTrends = () => {
 
         // Fallback usage if no key is present
         if (!groq) {
-            console.warn("No Groq API Key found. Using static data.");
+            console.warn("No Groq API Key found.");
             setDebugError("Missing Groq API Key");
-            setInsights(staticSectorData[sector] || []);
+            setInsights([]);
             setAiPowered(false);
             setLoading(false);
             return;
@@ -98,7 +72,7 @@ const CareerTrends = () => {
         } catch (error) {
             console.error("AI Fetch Error:", error);
             setDebugError(error.message || "Unknown Error");
-            setInsights(staticSectorData[sector] || []);
+            setInsights([]);
             setAiPowered(false);
         } finally {
             setLoading(false);
@@ -154,7 +128,7 @@ const CareerTrends = () => {
                                 className="absolute right-0 mt-2 w-[180px] bg-[#1e1e1e] rounded-xl shadow-2xl p-1 border border-white/10 overflow-hidden z-50"
                             >
                                 <div className="flex flex-col gap-1">
-                                    {Object.keys(staticSectorData).map((sector) => (
+                                    {SECTORS.map((sector) => (
                                         <button
                                             key={sector}
                                             onClick={() => {
