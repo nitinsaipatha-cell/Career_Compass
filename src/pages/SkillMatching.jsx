@@ -7,63 +7,42 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
+const jobRoles = [
+    {
+        title: 'Frontend Developer',
+        id: 'frontend',
+        requiredSkills: ['HTML', 'CSS', 'JavaScript', 'React', 'Git'],
+        description: 'Build user-facing web applications.'
+    },
+    {
+        title: 'Data Scientist',
+        id: 'data-science',
+        requiredSkills: ['Python', 'SQL', 'Math', 'Machine Learning', 'Pandas'],
+        description: 'Analyze data to derive insights.'
+    },
+    {
+        title: 'Backend Developer',
+        id: 'backend',
+        requiredSkills: ['Node.js', 'Python', 'Databases', 'API', 'Docker'],
+        description: 'Server-side logic and database management.'
+    },
+    {
+        title: 'UI/UX Designer',
+        id: 'design',
+        requiredSkills: ['Figma', 'Prototyping', 'User Research', 'Wireframing', 'Color Theory'],
+        description: 'Design intuitive user experiences.'
+    }
+];
+
 const SkillMatching = () => {
     const [skills, setSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
-    const [jobs, setJobs] = useState([]); // Dynamic jobs
-    const [loadingJobs, setLoadingJobs] = useState(false); // Loading state
+    const [showResults, setShowResults] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
     // Initialize Groq
     const apiKey = import.meta.env.VITE_GROQ_API_KEY || "";
     const groq = apiKey ? new Groq({ apiKey, dangerouslyAllowBrowser: true }) : null;
-
-    // Fetch Jobs based on Skills
-    const fetchMatchingJobs = async () => {
-        if (!groq) {
-            alert("API Key missing.");
-            return;
-        }
-        if (skills.length === 0) {
-            alert("Please add at least one skill first.");
-            return;
-        }
-
-        setLoadingJobs(true);
-        try {
-            const prompt = `
-                Based on these skills: ${skills.join(', ')}, suggest 4 matching job roles and 2 aspirational (reach) roles.
-                Return purely a JSON array with objects containing:
-                - title (e.g. 'Frontend Developer')
-                - id (unique string)
-                - requiredSkills (array of 5-8 key technical skills for this role)
-                - description (short 10-word summary)
-                Do not include markdown. Just key-value JSON.
-            `;
-
-            const completion = await groq.chat.completions.create({
-                messages: [{ role: "user", content: prompt }],
-                model: "llama-3.3-70b-versatile",
-            });
-
-            const text = completion.choices[0]?.message?.content || "[]";
-            const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
-            try {
-                const fetchedJobs = JSON.parse(cleanText);
-                if (Array.isArray(fetchedJobs)) {
-                    setJobs(fetchedJobs);
-                }
-            } catch (e) {
-                console.error("JSON parse error", e);
-            }
-
-        } catch (error) {
-            console.error("Error fetching jobs:", error);
-        } finally {
-            setLoadingJobs(false);
-        }
-    };
 
     const handleResumeUpload = async (e) => {
         const file = e.target.files[0];
@@ -104,8 +83,7 @@ const SkillMatching = () => {
             // Filter duplicates
             const uniqueNewSkills = newSkills.filter(s => !skills.includes(s));
             setSkills(prev => [...prev, ...uniqueNewSkills]);
-            // Optional: Auto-fetch jobs after upload?
-            // fetchMatchingJobs(); 
+            setShowResults(true);
 
         } catch (error) {
             console.error("Resume parsing error:", error);
@@ -121,6 +99,7 @@ const SkillMatching = () => {
         if (currentSkill.trim() && !skills.includes(currentSkill.trim())) {
             setSkills([...skills, currentSkill.trim()]);
             setCurrentSkill('');
+            setShowResults(true); // Update results in real-time
         }
     };
 
@@ -150,7 +129,7 @@ const SkillMatching = () => {
         <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-bold mb-2">Skill-Job Matcher</h1>
-                <p className="text-[var(--text-secondary)]">Enter your skills to find AI-curated job roles that fit your profile.</p>
+                <p className="text-[var(--text-secondary)]">Enter your skills to see which careers fit you best.</p>
             </div>
 
             <div className="glass-panel p-6">
@@ -183,7 +162,7 @@ const SkillMatching = () => {
                     </div>
                 </form>
 
-                <div className="flex flex-wrap gap-2 min-h-[50px] mb-6">
+                <div className="flex flex-wrap gap-2 min-h-[50px]">
                     <AnimatePresence>
                         {skills.map(skill => (
                             <motion.span
@@ -202,32 +181,14 @@ const SkillMatching = () => {
                     </AnimatePresence>
                     {skills.length === 0 && <p className="text-[var(--text-secondary)] text-sm italic py-2">No skills added yet. Add manually or upload a resume.</p>}
                 </div>
-
-                {skills.length > 0 && (
-                    <div className="flex justify-center border-t border-[var(--glass-border)] pt-6">
-                        <button
-                            onClick={fetchMatchingJobs}
-                            disabled={loadingJobs}
-                            className="btn-primary w-full md:w-auto text-lg px-8 py-3 shadow-xl shadow-indigo-500/20"
-                        >
-                            {loadingJobs ? (
-                                <><Loader2 className="animate-spin" /> Searching Jobs...</>
-                            ) : (
-                                <><Briefcase /> Find Matching Jobs</>
-                            )}
-                        </button>
-                    </div>
-                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                {jobs.map((job) => {
+                {jobRoles.map((job) => {
                     const { percentage, missing } = calculateMatch(job);
                     return (
                         <motion.div
                             layout
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
                             key={job.id}
                             className="glass-panel p-6 flex flex-col justify-between border-t-4 border-t-transparent hover:border-t-[var(--accent-primary)] transition-all"
                         >
@@ -272,12 +233,6 @@ const SkillMatching = () => {
                     );
                 })}
             </div>
-
-            {jobs.length === 0 && !loadingJobs && skills.length > 0 && (
-                <div className="text-center text-[var(--text-secondary)] mt-8">
-                    <p>Click "Find Matching Jobs" to see opportunities tailored to your skills.</p>
-                </div>
-            )}
         </div>
     );
 };
