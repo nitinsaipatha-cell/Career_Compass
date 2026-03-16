@@ -17,6 +17,9 @@ const Login = () => {
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: provider,
+                options: {
+                    redirectTo: window.location.origin
+                }
             });
             if (error) throw error;
         } catch (error) {
